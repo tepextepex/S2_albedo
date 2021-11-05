@@ -61,13 +61,21 @@ def b(band_id, zip_path):
 
 
 def narrow_to_broad(zip_path, method="liang"):
+    """
+
+    :param zip_path:
+    :param method: "liang" - Liang (2000); "bonafoni" - Bonafoni & Sekertekin (2020), DOI: 10.1109/LGRS.2020.2967085
+    :return:
+    """
     z = zip_path
+    if method == "bonafoni":
+        broad = 0.2266 * b("B02", z) + 0.1236 * b("B03", z) + 0.1573 * b("B04", z) + 0.3417 * b("B08", z) + 0.1170 * b("B11", z) + 0.0338 * b("B12", z)
     if method == "liang":
         broad = 0.356 * b("B02", z) + 0.130 * b("B04", z) + 0.373 * b("B08", z) + 0.085 * b("B11", z) + 0.072 * b("B12", z) - 18
         broad = broad / 10000  # NOTE the mult factor for Sentinel-2 L2A product is now 10000
-        # let's truncate the values above 1 and below 0:
-        broad = np.where(broad > 1.0, 1.0, broad)
-        broad = np.where(broad < 0.0, 0.0, broad)
+    # let's truncate the values above 1 and below 0:
+    broad = np.where(broad > 1.0, 1.0, broad)
+    broad = np.where(broad < 0.0, 0.0, broad)
     return broad
 
 
